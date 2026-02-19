@@ -11,6 +11,7 @@
     <modules>
         <module>nosql-datasource</module>
         <module>nosql-datasource</module>
+        <module>redis1</module>
     </modules>
 
     <properties>
