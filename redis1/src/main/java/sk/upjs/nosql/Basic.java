@@ -1,3 +1,5 @@
+package sk.upjs.nosql;
+
 import redis.clients.jedis.RedisClient;
 
 public class Basic {
