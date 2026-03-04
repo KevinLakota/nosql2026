@@ -12,6 +12,7 @@
         <module>nosql-datasource</module>
         <module>nosql-datasource</module>
         <module>redis1</module>
+        <module>redis-chat</module>
     </modules>
 
     <properties>
