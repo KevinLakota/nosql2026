@@ -18,6 +18,9 @@ public class SimpleStudentDao {
     public List<SimpleStudent> getAll() {
         return hashOperations.values(KEY);
     }
+    public SimpleStudent getById(long id) {
+        return hashOperations.get(KEY, id);
+    }
     public void save(SimpleStudent student) {
         hashOperations.put(KEY, student.getId(), student);
     }
