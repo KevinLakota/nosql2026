@@ -13,6 +13,7 @@
         <module>nosql-datasource</module>
         <module>redis1</module>
         <module>redis-chat</module>
+        <module>cassandra-template</module>
     </modules>
 
     <properties>

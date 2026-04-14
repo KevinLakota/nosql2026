@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import org.springframework.data.redis.core.RedisTemplate;
 
 
 import java.util.ArrayList;
@@ -21,8 +22,10 @@ public class MainSceneController {
     @FXML private TextField menoTextField;
 
     private ObservableList<String> spravy;
+    private RedisTemplate<String, String> redisTemplate;
 
     public MainSceneController() {
+        redisTemplate = RedisConfig.INSTANCE.redisTemplate();
     }
 
     @FXML
@@ -40,9 +43,12 @@ public class MainSceneController {
                 String text = textToSendTextField.getText();
                 String name = menoTextField.getText();
                 System.out.println("Sending message: " + name + ": " + text);
+                redisTemplate.convertAndSend(MESSAGES_CHANNEL, name + ": " + text);
+                textToSendTextField.clear();
             }
         });
-        // TODO počúvať na správy od ostatných
+        SubscriberService service = new SubscriberService(spravy);
+        service.start();
     }
 
 }

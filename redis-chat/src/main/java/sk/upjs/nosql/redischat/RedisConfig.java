@@ -2,6 +2,7 @@ package sk.upjs.nosql.redischat;
 
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
@@ -32,12 +33,17 @@ public enum RedisConfig {
 
     public RedisConnectionFactory redisConnectionFactory() {
         LettuceConnectionFactory factory = new LettuceConnectionFactory(redisStandaloneConfiguration());
+        factory.afterPropertiesSet();
         return factory;
     }
     public RedisTemplate<String, String> redisTemplate() {
         RedisTemplate<String, String> template = new RedisTemplate<>();
         template.setConnectionFactory(redisConnectionFactory());
-        template.setKeySerializer(new StringRedisSerializer());
+        template.setDefaultSerializer(new StringRedisSerializer());
+        template.afterPropertiesSet();
         return template;
+    }
+    public RedisConnection redisConnection() {
+        return redisConnectionFactory().getConnection();
     }
 }
