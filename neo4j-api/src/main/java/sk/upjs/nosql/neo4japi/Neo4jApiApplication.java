@@ -16,7 +16,8 @@ public class Neo4jApiApplication {
         DbService service = context.getBean(DbService.class);
 //        service.fillDatabase();
 //        service.fillDatabaseWithoutDuplicities();
-        service.printOneDownload();
+//        service.printOneDownload();
+        service.printShortestPathsToDetailPages();
     }
 
     public static void deleteDb() {

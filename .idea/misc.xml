@@ -8,6 +8,7 @@
         <option value="$PROJECT_DIR$/redis-repository/pom.xml" />
         <option value="$PROJECT_DIR$/cassandra-repository/pom.xml" />
         <option value="$PROJECT_DIR$/neo4j-api/pom.xml" />
+        <option value="$PROJECT_DIR$/neo4j-repository/pom.xml" />
       </list>
     </option>
   </component>

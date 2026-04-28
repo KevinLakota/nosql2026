@@ -4,7 +4,12 @@ import nosql.aislike.DaoFactory;
 import nosql.crawl.DownloadDao;
 import nosql.crawl.entity.Download;
 import nosql.crawl.entity.Page;
+import org.neo4j.graphalgo.BasicEvaluationContext;
+import org.neo4j.graphalgo.GraphAlgoFactory;
+import org.neo4j.graphalgo.PathFinder;
 import org.neo4j.graphdb.*;
+import org.neo4j.graphdb.traversal.Evaluation;
+import org.neo4j.graphdb.traversal.Evaluator;
 import org.neo4j.graphdb.traversal.TraversalDescription;
 import org.neo4j.graphdb.traversal.Traverser;
 import org.springframework.stereotype.Service;
@@ -91,7 +96,7 @@ public class DbService {
             Node seedNode = dNnodes.next().getSingleRelationship(SEED_PAGE, Direction.OUTGOING)
                     .getEndNode();
             TraversalDescription td = tx.traversalDescription()
-                    .breadthFirst()
+                    .depthFirst()
                     .relationships(LINKS_TO, Direction.OUTGOING);
             Traverser traverser = td.traverse(seedNode);
             Iterator<Path> paths = traverser.iterator();
@@ -183,4 +188,40 @@ public class DbService {
         System.out.println("Page links created " + (System.nanoTime() - start)/1_000_000 + " ms");
     }
 
+    public void printShortestPathsToDetailPages() {
+        try(Transaction tx = db.beginTx()) {
+            ResourceIterator<Node> dNnodes = tx.findNodes(DOWNLOAD);
+            Node seedNode = dNnodes.next().getSingleRelationship(SEED_PAGE, Direction.OUTGOING)
+                    .getEndNode();
+            TraversalDescription td = tx.traversalDescription()
+                    .depthFirst()
+                    .relationships(LINKS_TO, Direction.OUTGOING)
+                    .evaluator(new Evaluator() {
+                        @Override
+                        public Evaluation evaluate(Path path) {
+                            if (path.endNode().getProperty("isDetailPage").equals(true)) {
+                                return Evaluation.INCLUDE_AND_CONTINUE;
+                            } else {
+                                return Evaluation.EXCLUDE_AND_CONTINUE;
+                            }
+                        }
+                    });
+            Traverser traverser = td.traverse(seedNode);
+            Iterator<Path> paths = traverser.iterator();
+            PathFinder<Path> pathFinder = GraphAlgoFactory.shortestPath(new BasicEvaluationContext(tx, db),
+                    PathExpanders.forTypeAndDirection(LINKS_TO, Direction.OUTGOING), 50);
+            int count = 0;
+            while (paths.hasNext()) {
+                Path path = paths.next();
+                Path shortestPath = pathFinder.findSinglePath(seedNode, path.endNode());
+                count++;
+                System.out.print(count + ": ");
+                for(int i = 0; i < shortestPath.length(); i++) {
+                    System.out.print("  ");
+                }
+                System.out.println(shortestPath.endNode().getProperty("url"));
+            }
+        }
+
+    }
 }
