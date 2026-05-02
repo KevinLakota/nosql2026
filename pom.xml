@@ -10,10 +10,14 @@
     <packaging>pom</packaging>
     <modules>
         <module>nosql-datasource</module>
-        <module>nosql-datasource</module>
+        <module>mongo</module>
         <module>redis1</module>
         <module>redis-chat</module>
         <module>cassandra-template</module>
+        <module>cassandra-repository</module>
+        <module>neo4j-api</module>
+        <module>neo4j-repository</module>
+        <module>redis-repository</module>
     </modules>
 
     <properties>
